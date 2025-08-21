@@ -1,0 +1,21 @@
+{
+  "name": "maestro_template_builder_diagram",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "diagram-js": "^15.3.0",
+    "inherits": "^2.0.4",
+    "tiny-svg": "^4.1.3"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
