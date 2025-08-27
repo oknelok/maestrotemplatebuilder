@@ -41,6 +41,27 @@ class MaestroTaskRenderer extends BaseRenderer {
       circle.setAttribute('stroke', strokeColour);
       circle.setAttribute('taskid', taskID);
       svgAppend(group, circle);
+    } 
+    else if(taskType == 'MaestroIf') {
+      // Draw diamond task shape
+      const diamond = svgCreate('polygon');
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const size = width / 2; // Using width as the diamond size
+      
+      // Define diamond points: top, right, bottom, left
+      const points = [
+        `${centerX},${centerY - size}`,     // top point
+        `${centerX + size},${centerY}`,     // right point
+        `${centerX},${centerY + size}`,     // bottom point
+        `${centerX - size},${centerY}`      // left point
+      ].join(' ');
+      
+      diamond.setAttribute('points', points);
+      diamond.setAttribute('fill', '#eee');
+      diamond.setAttribute('stroke', strokeColour);
+      diamond.setAttribute('taskid', taskID);
+      svgAppend(group, diamond);
     }
     else {
       // Draw rectangle task shape

@@ -166,42 +166,75 @@
     let destY = target.y ;
     let destWidth = target.width;
     let destHeight = target.height;
-
+    let sourceCentreX = sourceX + (sourceWidth / 2);
+    let sourceCentreY = sourceY + (sourceHeight / 2);
+    let targetCentreX = destX + (destWidth / 2);
+    let targetCentreY = destY + (destHeight / 2);
+    let diamondSize = destWidth / 2;
+    
     var hypotenuse = [], hypotoffsets = [], pointsboxFrom = [], pointsboxTo = [], points = [];
     var calc, points = [];
-    // The top and bottom points are identical for that of the circle and rectangle
-    pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre
-    pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre
-    pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre
-    pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre
 
-    // Take into account we have circle shapes which require different calcs for their left/right points
+    // Calculate the source task coordinates
     if(source.taskType == "MaestroStart" || source.taskType == "MaestroEnd") {
       // Circle
-      pointsboxFrom.push( [sourceX + sourceHeight, sourceY + sourceHeight/2] );
-      pointsboxFrom.push( [sourceX + sourceHeight/2, sourceY + sourceHeight/2] );
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
+      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
+      pointsboxFrom.push( [sourceX + sourceHeight, sourceY + sourceHeight/2] ); // source right side
+      pointsboxFrom.push( [sourceX + sourceHeight/2, sourceY + sourceHeight/2] ); // source left side
+    }
+    else if(source.taskType == 'MaestroIf') {
+      // Diamond
+      pointsboxFrom.push( [sourceCentreX, sourceCentreY - diamondSize] ); // top centre source
+      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
+      pointsboxFrom.push( [sourceCentreX, sourceCentreY + diamondSize] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth, sourceY + sourceHeight/2] ); // source right side
+      pointsboxFrom.push( [sourceX, sourceY + sourceHeight/2] );  // source left side
     }
     else {
       // Rectangle
-      pointsboxFrom.push( [sourceX + sourceWidth, sourceY + sourceHeight/2] );
-      pointsboxFrom.push( [sourceX, sourceY + sourceHeight/2] );
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
+      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth, sourceY + sourceHeight/2] ); // source right side
+      pointsboxFrom.push( [sourceX, sourceY + sourceHeight/2] );  // source left side
     }
-    
+
+    // Calculate the target task coordinates
     if(target.taskType == "MaestroStart" || target.taskType == "MaestroEnd") {
       // Circle
-      // Since this is a circle, and our x/y is top/left the circle is centred around a rectangle that is heightXwidth still.
-      // So this is why to find the right point of our circle, we move the X coordinate to the centre (destX + destWidth/2)
-      // and then add in the radius of the circle, which is destHeight/2 (as the diameter of the circle is the task height)
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
+      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
       pointsboxTo.push( [destX + destWidth/2 + destHeight/2, destY + destHeight/2] ); //right of each
       pointsboxTo.push( [destX + destHeight/2, destY + destHeight/2] ); //left of each
     }
+    else if(target.taskType == 'MaestroIf') {
+      // Diamond
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
+      pointsboxTo.push( [targetCentreX, targetCentreY - diamondSize ] ); // top centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, targetCentreY + diamondSize] ); // bottom centre destination
+      pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of each
+      pointsboxTo.push( [destX, destY + destHeight/2] ); //left of each
+    }
     else {
-      // Rectangle
+      // Rectangle 
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
+      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
+      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
+      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
       pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of each
       pointsboxTo.push( [destX, destY + destHeight/2] ); //left of each
     }
 
-    //now, loop thru the FROM points, comparing each point to the TO points, calculating the hypotenuse, recording which hypotenuse is shortest
+    // Loop thru the FROM points, comparing each point to the TO points, 
+    // calculating the hypotenuse, recording which hypotenuse is shortest
     for(i=0; i<pointsboxFrom.length; i++) {
       for(x=0; x<pointsboxTo.length; x++) {
         let deltax = Math.abs(pointsboxTo[x][0] - pointsboxFrom[i][0]);
@@ -212,7 +245,7 @@
       }
     }
     calc = 0;
-    //ok, now, for each hypotenuse, see which is shortest, then THAT becomes the point set to use
+    // For each hypotenuse, see which is shortest, then THAT becomes the point set to use
     for(i=0; i<hypotenuse.length; i++) {
       if(hypotenuse[i] < calc || calc == 0) {
         calc = hypotenuse[i];

@@ -130,6 +130,26 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
         </svg>
       `;
     }
+    else if (pluginId == 'MaestroIf') { // Diamond shape
+      // Truncate the label into 13 characters max
+      var displayLabel = label.slice(0, 13);
+      if (displayLabel != label) {
+        displayLabel = displayLabel + '...';
+      }
+      let tspans = '';
+      tspans += `<tspan x="50%" dy="0">${displayLabel}</tspan>`;
+
+      svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="80" viewBox="0 0 70 80">
+          <polygon points="35,0 70,40 35,80 0,40"
+                  fill="none" stroke="${colour}" stroke-width="2" />
+          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                font-size="${fontSize}" font-family="${fontFamily}" fill="#000">
+            ${tspans}
+          </text>
+        </svg>
+      `;
+    }
     else { // Rectangle shape
       // Truncate the label into 13 characters max
       var displayLabel = label.slice(0, 13);
