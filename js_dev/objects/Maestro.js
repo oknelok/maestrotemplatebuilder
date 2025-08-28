@@ -166,71 +166,61 @@
     let destY = target.y ;
     let destWidth = target.width;
     let destHeight = target.height;
+
     let sourceCentreX = sourceX + (sourceWidth / 2);
     let sourceCentreY = sourceY + (sourceHeight / 2);
     let targetCentreX = destX + (destWidth / 2);
     let targetCentreY = destY + (destHeight / 2);
-    let diamondSize = destWidth / 2;
-    
-    var hypotenuse = [], hypotoffsets = [], pointsboxFrom = [], pointsboxTo = [], points = [];
-    var calc, points = [];
 
-    // Calculate the source task coordinates
+    let diamondSize = destWidth / 2;
+    let circleSize = destHeight / 2;
+    
+    var calc, hypotenuse = [], hypotoffsets = [], pointsboxFrom = [], pointsboxTo = [], points = [];
+    
+    // Calculate the 4 points for the source, based on task type
     if(source.taskType == "MaestroStart" || source.taskType == "MaestroEnd") {
       // Circle
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
-      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
-      pointsboxFrom.push( [sourceX + sourceHeight, sourceY + sourceHeight/2] ); // source right side
-      pointsboxFrom.push( [sourceX + sourceHeight/2, sourceY + sourceHeight/2] ); // source left side
+       pointsboxFrom.push( [sourceCentreX, sourceY] ); // top centre source
+       pointsboxFrom.push( [sourceCentreX, sourceY + sourceHeight] ); // botton centre source
+       pointsboxFrom.push( [sourceX + sourceHeight, sourceY + sourceHeight/2] ); // source right side
+       pointsboxFrom.push( [sourceX + sourceHeight/2, sourceY + sourceHeight/2] ); // source left side
     }
     else if(source.taskType == 'MaestroIf') {
-      // Diamond
+      // Diamond.  Diamond currently has outbound connections at each vertex. 
       pointsboxFrom.push( [sourceCentreX, sourceCentreY - diamondSize] ); // top centre source
-      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
       pointsboxFrom.push( [sourceCentreX, sourceCentreY + diamondSize] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
       pointsboxFrom.push( [sourceX + sourceWidth, sourceY + sourceHeight/2] ); // source right side
       pointsboxFrom.push( [sourceX, sourceY + sourceHeight/2] );  // source left side
     }
     else {
-      // Rectangle
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
-      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
+      // Default Rectangle
+      pointsboxFrom.push( [sourceCentreX, sourceY] ); // top centre source
+      pointsboxFrom.push( [sourceCentreX, sourceY + sourceHeight] ); // botton centre source
       pointsboxFrom.push( [sourceX + sourceWidth, sourceY + sourceHeight/2] ); // source right side
       pointsboxFrom.push( [sourceX, sourceY + sourceHeight/2] );  // source left side
     }
 
-    // Calculate the target task coordinates
+    // Calculate the 4 points for the target, based on task type
     if(target.taskType == "MaestroStart" || target.taskType == "MaestroEnd") {
       // Circle
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
-      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
-      pointsboxTo.push( [destX + destWidth/2 + destHeight/2, destY + destHeight/2] ); //right of each
-      pointsboxTo.push( [destX + destHeight/2, destY + destHeight/2] ); //left of each
+      pointsboxTo.push( [targetCentreX, destY] ); // top centre destination
+      pointsboxTo.push( [targetCentreX, destY + destHeight] ); // bottom centre destination
+      pointsboxTo.push( [targetCentreX + destHeight/2, destY + destHeight/2] ); //right of destination
+      pointsboxTo.push( [destX + destHeight/2, destY + destHeight/2] ); //left of destination
     }
     else if(target.taskType == 'MaestroIf') {
       // Diamond
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
       pointsboxTo.push( [targetCentreX, targetCentreY - diamondSize ] ); // top centre destination
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, targetCentreY + diamondSize] ); // bottom centre destination
-      pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of each
-      pointsboxTo.push( [destX, destY + destHeight/2] ); //left of each
+      pointsboxTo.push( [targetCentreX, targetCentreY + diamondSize] ); // bottom centre destination
+      pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of destination
+      pointsboxTo.push( [destX, destY + destHeight/2] ); //left of destination
     }
     else {
       // Rectangle 
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY] ); // top centre source
-      pointsboxTo.push( [destX + destWidth/2, destY] ); // top centre destination
-      pointsboxFrom.push( [sourceX + sourceWidth/2, sourceY + sourceHeight] ); // botton centre source
-      pointsboxTo.push( [destX + destWidth/2, destY + destHeight] ); // bottom centre destination
-      pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of each
-      pointsboxTo.push( [destX, destY + destHeight/2] ); //left of each
+      pointsboxTo.push( [targetCentreX, destY] ); // top centre destination
+      pointsboxTo.push( [targetCentreX, destY + destHeight] ); // bottom centre destination
+      pointsboxTo.push( [destX + destWidth, destY + destHeight/2] ); //right of destination
+      pointsboxTo.push( [destX, destY + destHeight/2] ); //left of destination
     }
 
     // Loop thru the FROM points, comparing each point to the TO points, 
