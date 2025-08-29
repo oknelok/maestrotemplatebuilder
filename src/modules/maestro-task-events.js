@@ -1,10 +1,8 @@
 import * as tinySVG from 'tiny-svg';
 import Canvas from 'diagram-js/lib/core/Canvas';
 
-export default {
-  __init__: ['maestroTaskEvents'],
-  maestroTaskEvents: ['type', function(canvas, eventBus, modeling) {
-   
+function MaestroTaskEvents(canvas, eventBus, modeling) {
+  
     const margin = 0; // optional padding inside canvas
 
     // Initialize the diagram with our custom arrowhead SVGs, zoom level and pan.
@@ -284,5 +282,15 @@ export default {
 
     }
 
-  }]
+}
+
+
+MaestroTaskEvents.$inject = [ 'canvas', 'eventBus', 'modeling' ];
+
+export default {
+  __init__: ['maestroTaskEvents'],
+  maestroTaskEvents: ['type', MaestroTaskEvents]
 };
+
+
+

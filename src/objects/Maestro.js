@@ -225,8 +225,8 @@
 
     // Loop thru the FROM points, comparing each point to the TO points, 
     // calculating the hypotenuse, recording which hypotenuse is shortest
-    for(i=0; i<pointsboxFrom.length; i++) {
-      for(x=0; x<pointsboxTo.length; x++) {
+    for(let i=0; i<pointsboxFrom.length; i++) {
+      for(let x=0; x<pointsboxTo.length; x++) {
         let deltax = Math.abs(pointsboxTo[x][0] - pointsboxFrom[i][0]);
         let deltay = Math.abs(pointsboxFrom[i][1] - pointsboxTo[x][1]);
         calc = Math.pow( deltax,2) + Math.pow(deltay , 2);
@@ -236,7 +236,7 @@
     }
     calc = 0;
     // For each hypotenuse, see which is shortest, then THAT becomes the point set to use
-    for(i=0; i<hypotenuse.length; i++) {
+    for(let i=0; i<hypotenuse.length; i++) {
       if(hypotenuse[i] < calc || calc == 0) {
         calc = hypotenuse[i];
         points = hypotoffsets[i];
