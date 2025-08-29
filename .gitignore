@@ -1,0 +1,4 @@
+# Ignore the build and node directories
+./js
+./css
+./node_modules
