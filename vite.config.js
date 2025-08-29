@@ -11,7 +11,13 @@ function moveCssPlugin() {
     closeBundle() {
       const jsOutDir = path.resolve(__dirname, 'js/assets');
       const cssOutDir = path.resolve(__dirname, 'css');
-
+      fs.mkdir(cssOutDir, (err) => {
+        if (err) {
+          console.error('CSS Directory likely already exists:', err);
+        } else {
+          console.log('CSS Directory created successfully!');
+        }
+      });
       // Move all .css files from js/assets dir to css dir
       fs.readdirSync(jsOutDir).forEach(file => {
         if (file.endsWith('.css')) {
@@ -30,14 +36,14 @@ function moveCssPlugin() {
 
 // Main vite config
 export default defineConfig({
-  root: './js_dev',
+  root: './src',
   build: {
     outDir: '../js',
     emptyOutDir: false,
     minify: false, // Disables minification for development
     sourcemap: true,
     rollupOptions: {
-      input: './js_dev/main.js',
+      input: './src/main.js',
       output: {
         entryFileNames: 'MaestroTemplateBuilder.js',
         format: 'es'
