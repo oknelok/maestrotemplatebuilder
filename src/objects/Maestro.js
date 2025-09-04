@@ -135,7 +135,7 @@
     });
     //now show the ones for this task
     $('#edit-menu > div').children().each(function() {
-      capabilities_id = this.getAttribute('maestro_capabilities_id');
+      let capabilities_id = this.getAttribute('maestro_capabilities_id');
       if(capabilities_id != null && capabilities_id.startsWith('maestro_template_')) {
         for(let i=0; i < capabilities.length; i++) {
           if(capabilities_id == capabilities[i]) $('#' + this.id).show();
@@ -182,7 +182,7 @@
       // Circle
        pointsboxFrom.push( [sourceCentreX, sourceY] ); // top centre source
        pointsboxFrom.push( [sourceCentreX, sourceY + sourceHeight] ); // botton centre source
-       pointsboxFrom.push( [sourceX + sourceHeight, sourceY + sourceHeight/2] ); // source right side
+       pointsboxFrom.push( [sourceCentreX + circleSize, sourceY + sourceHeight/2] ); // source right side
        pointsboxFrom.push( [sourceX + sourceHeight/2, sourceY + sourceHeight/2] ); // source left side
     }
     else if(source.taskType == 'MaestroIf') {
@@ -285,7 +285,7 @@
    * @param {string} taskid - the unique task ID.
    */
   Maestro.maestroRemoveTaskLines = function(taskid) {
-    task = Maestro.maestroGetTaskReference(taskid) || null;
+    var task = Maestro.maestroGetTaskReference(taskid) || null;
 
     if(task) {
       // Clone the outgoing and incoming task connection arrays to avoid modification during iteration

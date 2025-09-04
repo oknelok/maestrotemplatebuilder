@@ -65,6 +65,7 @@ function MaestroTaskEvents(canvas, eventBus, modeling) {
       if (element.type.startsWith('maestro:Task')) {
         let title = tinySVG.create('title');
         let content = element.longTaskName || '';
+        content +=`\n${element.taskType}`;
         content += `\nID: ${element.taskid}`;
         if(parseInt(element.workflowStatusNumber) > 0) {
           content += `\n${element.workflowStatusMessage}`;

@@ -98,16 +98,10 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
   }
 
   const style = document.createElement('style');
-  let css = '';
-
-  // Create an offscreen canvas for text measurement
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  const fontSize = 18;
-  const fontFamily = 'Arial, sans-serif';
-  ctx.font = `${fontSize}px ${fontFamily}`;
-
+  let css = '', shapeCss = '', textCss = '';
   Object.keys(Maestro.taskTypes).forEach(pluginId => {
+    shapeCss = '';
+    textCss = '';
     const colour = Maestro.maestroTaskColours[pluginId];
     const label = Maestro.taskTypes[pluginId];
     // Create SVG markup
@@ -118,71 +112,74 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
       if(displayLabel != label) {
         displayLabel = displayLabel + '...';
       }
-      let tspans = '';
-      tspans += `<tspan x="50%" dy="1em">${displayLabel}</tspan>`;
-      svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="140" height="80">
-          <circle cx="70" cy="40" r="38" fill="none" stroke="${colour}" stroke-width="5" />
-          <text x="50%" y="30%" dominant-baseline="middle" text-anchor="middle"
-                font-size="${fontSize}" font-family="${fontFamily}" fill="#000">
-            ${tspans}
-          </text>
-        </svg>
+      shapeCss = `
+        border: solid ${colour} 2px;
+        width: 75px !important;
+        height: 50px !important;
+        margin: 2px;
+        border-radius: 30px;
+        max-width: 52px;
+        padding: 3px;
+        line-height: 38px !important;
       `;
     }
     else if (pluginId == 'MaestroIf') { // Diamond shape
-      // Truncate the label into 13 characters max
-      var displayLabel = label.slice(0, 13);
+      // Truncate the label into 12 characters max
+      var displayLabel = label.slice(0, 12);
       if (displayLabel != label) {
         displayLabel = displayLabel + '...';
       }
-      let tspans = '';
-      tspans += `<tspan x="50%" dy="0">${displayLabel}</tspan>`;
 
-      svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="80" viewBox="0 0 70 80">
-          <polygon points="35,0 70,40 35,80 0,40"
-                  fill="none" stroke="${colour}" stroke-width="2" />
-          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-                font-size="${fontSize}" font-family="${fontFamily}" fill="#000">
-            ${tspans}
-          </text>
-        </svg>
+      css += `.palette-icon-${pluginId.toLowerCase()}:after {
+        content: "";
+        display: block;
+        background: none;
+        position: relative;   
+        width: 35px;
+        height: 35px;
+        border: solid ${colour} 2px;
+        transform: rotate(45deg);
+        top: -27px;
+      }`;
+
+      shapeCss = `
+        border-radius: 0px;
+        max-width: 35px;
+        max-height: 35px;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 10px;
+        padding: 3px;
+        line-height: 17px !important;
       `;
+
     }
     else { // Rectangle shape
-      // Truncate the label into 13 characters max
-      var displayLabel = label.slice(0, 13);
+      // Truncate the label into 12 characters max
+      var displayLabel = label.slice(0, 12);
       if(displayLabel != label) {
         displayLabel = displayLabel + '...';
       }
-      let tspans = '';
-      tspans += `<tspan x="50%" dy="1em">${displayLabel}</tspan>`;
-      svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="140" height="80">
-          <rect width="140" height="80" fill="none" stroke="${colour}" stroke-width="5" rx="20" ry="20" />
-          <text x="50%" y="30%" dominant-baseline="middle" text-anchor="middle"
-                font-size="${fontSize}" font-family="${fontFamily}" fill="#000">
-            ${tspans}
-          </text>
-        </svg>
-      `;
-    }
-    
-    // Encode as data URI
-    const encodedSvg = encodeURIComponent(svg)
-      .replace(/'/g, '%27')
-      .replace(/"/g, '%22');
 
+      shapeCss = `
+        border: solid ${colour} 2px;
+        width: 75px !important;
+        height: 50px !important;
+        margin: 2px;
+        border-radius: 12px;
+        padding: 3px;
+        line-height: 38px !important;
+      `;
+      
+    }
     // Inject CSS for palette icon
     css += `.palette-icon-${pluginId.toLowerCase()} {
-      background-image: url("data:image/svg+xml,${encodedSvg}");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      width: 120px;
-      height: 40px;
-      stroke-width: 15px;
+      ${shapeCss}
+    }\n
+    .palette-icon-${pluginId.toLowerCase()}:before {
+      content: "${displayLabel}";
+      font-size: 7pt;
+      ${textCss}
     }\n`;
   });
 
