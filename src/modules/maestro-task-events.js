@@ -161,6 +161,8 @@ function MaestroTaskEvents(canvas, eventBus, modeling) {
       const elementFactory = Maestro.maestroDiagram.get('elementFactory');
       const root = canvas.getRootElement();
       var 
+        connection, 
+        waypoints,
         sourceTask, 
         targetTask, 
         connectionType = 'maestroNormal', 
@@ -171,17 +173,17 @@ function MaestroTaskEvents(canvas, eventBus, modeling) {
         targetTask = event.newSelection[0] || null;
         if(Maestro.maestroLineFrom) {
           // Regular connection line
-          sourceTask = task = Maestro.maestroGetTaskReference(Maestro.maestroLineFrom);
+          sourceTask = Maestro.maestroGetTaskReference(Maestro.maestroLineFrom);
         }
         else {
           // False connection line
           connectionType = 'MaestroFalse';
-          sourceTask = task = Maestro.maestroGetTaskReference(Maestro.maestroFalseLineFrom);
+          sourceTask = Maestro.maestroGetTaskReference(Maestro.maestroFalseLineFrom);
           completionButton = '#edit-draw-false-line-complete';
         }
         
         waypoints = Maestro.maestroCalculateClosestEdgePointsFromShapes(sourceTask, targetTask);
-        let connection = elementFactory.createConnection({
+        connection = elementFactory.createConnection({
           type: 'connection',
           waypoints: waypoints,
           source: sourceTask,
