@@ -127,8 +127,8 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
       }`;
 
       shapeCss = `
-        width: 75px !important;
-        height: 50px !important;
+        width: 79px !important;
+        height: 54px !important;
         margin: 2px;
         border: none;
         padding: 3px;
@@ -147,25 +147,27 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
         display: block;
         background: none;
         position: relative;   
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
         border: solid ${colour} 2px;
+        border-radius: 0px;
         transform: rotate(45deg);
-        top: -27px;
+        top: -41px;
+        left: 10px;
       }`;
 
       shapeCss = `
-        border-radius: 0px;
-        margin-left: 20px;
-        margin-right: 10px;
-        margin-top: 10px;
+        width: 79px !important;
+        height: 54px !important;
+        margin: 2px;
+        border: none;
         padding: 3px;
-        line-height: 17px !important;
+        line-height: 38px !important;
       `;
 
       textCss = `
         position: relative;
-        left: -2px;
+        left: -5px;
       `;
 
     }
