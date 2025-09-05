@@ -177,7 +177,7 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
       if(displayLabel != label) {
         displayLabel = displayLabel + '...';
       }
-
+      var displayLabel = label;
       shapeCss = `
         border: solid ${colour} 2px;
         width: 75px !important;
@@ -186,6 +186,17 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
         border-radius: 12px;
         padding: 3px;
         line-height: 38px !important;
+      `;
+
+      textCss = `
+        width: 80px;
+        position: relative;
+        display: block;
+        height: 55px;
+        white-space: wrap;
+        line-height: 10px;
+        margin-top: 16px;
+        text-align: center;
       `;
       
     }
