@@ -172,11 +172,6 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
 
     }
     else { // Rectangle shape
-      // Truncate the label into 12 characters max
-      var displayLabel = label.slice(0, 12);
-      if(displayLabel != label) {
-        displayLabel = displayLabel + '...';
-      }
       var displayLabel = label;
       shapeCss = `
         border: solid ${colour} 2px;
