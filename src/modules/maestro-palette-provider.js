@@ -192,6 +192,7 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
         line-height: 10px;
         margin-top: 16px;
         text-align: center;
+        left: -2px;
       `;
       
     }
