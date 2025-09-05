@@ -107,18 +107,30 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
     // Create SVG markup
     let svg;
     if(pluginId == 'MaestroEnd') { // Circle shape
-      // Truncate the label into 5 characters max
-      var displayLabel = label.slice(0, 5);
+      // Truncate the label into 8 characters max
+      var displayLabel = label.slice(0, 8);
       if(displayLabel != label) {
         displayLabel = displayLabel + '...';
       }
-      shapeCss = `
+
+      css += `.palette-icon-${pluginId.toLowerCase()}:after {
+        content: "";
+        display: block;
+        background: none;
+        position: relative;   
+        width: 50px;
+        height: 50px;
         border: solid ${colour} 2px;
+        border-radius: 30px;
+        top: -45px;
+        left: 10px;
+      }`;
+
+      shapeCss = `
         width: 75px !important;
         height: 50px !important;
         margin: 2px;
-        border-radius: 30px;
-        max-width: 52px;
+        border: none;
         padding: 3px;
         line-height: 38px !important;
       `;
@@ -144,13 +156,16 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
 
       shapeCss = `
         border-radius: 0px;
-        max-width: 35px;
-        max-height: 35px;
         margin-left: 20px;
-        margin-right: 20px;
+        margin-right: 10px;
         margin-top: 10px;
         padding: 3px;
         line-height: 17px !important;
+      `;
+
+      textCss = `
+        position: relative;
+        left: -2px;
       `;
 
     }
