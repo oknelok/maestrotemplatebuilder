@@ -28,7 +28,6 @@ MaestroPaletteProvider.$inject = [
  */
 MaestroPaletteProvider.prototype.createTaskTypeEntries = function(createAction) {
     const entries = {};
-    
     // Check if our object types are set up
     if (!Maestro.taskTypes || 
         !Maestro.maestroTaskColours) {
@@ -42,6 +41,7 @@ MaestroPaletteProvider.prototype.createTaskTypeEntries = function(createAction) 
         const colour = Maestro.maestroTaskColours[pluginId] || '#cccccc'; // fallback color
         const taskWidth = Maestro.taskWidth || 100;
         const taskHeight = Maestro.taskHeight || 50;
+        
         // Create a unique entry ID
         const entryId = `create-${pluginId.toLowerCase()}`;
         const dt = new Date();
@@ -85,6 +85,63 @@ MaestroPaletteProvider.prototype.createTaskTypeEntries = function(createAction) 
           }
         );
     });
+
+    // Add separator before zoom controls
+    entries['zoom-separator'] = {
+      group: 'zoom',
+      separator: true,
+      class: 'maestro-zoom-separator'
+    };
+
+    // Zoom In button
+    entries['zoom-in'] = {
+      group: 'zoom',
+      className: 'maestro-palette-zoom',
+      title: 'Zoom In',
+      action: {
+        click: function() {
+          const currentZoom = Maestro.canvas.zoom();
+          const newZoom = Math.min(currentZoom + 0.1, 4);
+          Maestro.canvas.zoom(newZoom);
+        }
+      },
+      html: `
+        <div class="entry" title="Zoom In">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      `
+    };
+
+    // Zoom Out button
+    entries['zoom-out'] = {
+      group: 'zoom',
+      className: 'maestro-palette-zoom',
+      title: 'Zoom Out',
+      action: {
+        click: function() {
+          const currentZoom = Maestro.canvas.zoom();
+          const newZoom = Math.max(currentZoom - 0.1, 0.2);
+          Maestro.canvas.zoom(newZoom);
+        }
+      },
+      html: `
+        <div class="entry" title="Zoom Out">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <path d="M4 10h12" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      `
+    };
+
+
+
+
+
+
+
+
 
     return entries;
 };
@@ -249,8 +306,6 @@ MaestroPaletteProvider.prototype.getPaletteEntries = function(element) {
     }
 
     return {
-        
-
         // Dynamically create task type entries
         ...this.createTaskTypeEntries(createAction)
     };
