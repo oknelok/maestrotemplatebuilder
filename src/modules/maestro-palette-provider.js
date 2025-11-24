@@ -66,14 +66,14 @@ MaestroPaletteProvider.prototype.createTaskTypeEntries = function(createAction) 
             height: 80,
             taskType: pluginId,
             taskColor: colour,
-            id: `${pluginId.toLowerCase()}${time}`,
+            id: `${pluginId.toLowerCase()}`,
             x: 10,
             y: 10,
             width: taskWidth,
             height: taskHeight,
             type: 'maestro:Task',
             draggable: true,
-            taskid: `${pluginId.toLowerCase()}${time}`,
+            taskid: `${pluginId.toLowerCase()}`,
             colour: colour,
             uiLabel: `${label}`,
             taskName: `${label}`,
@@ -269,8 +269,6 @@ MaestroPaletteProvider.prototype.injectTaskColors = function() {
 };
 
 
-
-
 /**
  * Return palette entries.
  */
@@ -284,9 +282,17 @@ MaestroPaletteProvider.prototype.getPaletteEntries = function(element) {
     function createAction(type, group, className, title, options = {}) {
         function createListener(event) {
             const shape = elementFactory.createShape(Object.assign({ type: type }, options));
-            
-            if (options) {
-                Object.assign(shape, options);
+            const time = Date.now();
+            // Update the ID and Task ID with an appended timestamp to make the tasks unique
+
+            // Copy the options object to avoid mutating the original
+            const updatedOptions = { ...options };
+
+            updatedOptions.id = `${options.id}${time}`;
+            updatedOptions.taskid = `${options.taskid}${time}`;
+
+            if (updatedOptions) {
+              Object.assign(shape, updatedOptions);
             }
             
             create.start(event, shape);
@@ -301,8 +307,6 @@ MaestroPaletteProvider.prototype.getPaletteEntries = function(element) {
                 click: createListener
             }
         };
-
-
     }
 
     return {
