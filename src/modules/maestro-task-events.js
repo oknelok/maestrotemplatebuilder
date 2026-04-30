@@ -2,8 +2,22 @@ import * as tinySVG from 'tiny-svg';
 import Canvas from 'diagram-js/lib/core/Canvas';
 
 function MaestroTaskEvents(canvas, eventBus, modeling) {
-  
+
     const margin = 0; // optional padding inside canvas
+
+    // Track drag state so element.changed DOM work is deferred during drag.
+    let isDragging = false;
+    let deferredChangedElements = new Set();
+
+    eventBus.on('drag.start', function() {
+      isDragging = true;
+    });
+
+    eventBus.on('drag.end', function() {
+      isDragging = false;
+      deferredChangedElements.forEach(el => _applyConnectionStyle(el));
+      deferredChangedElements.clear();
+    });
 
     // Initialize the diagram with our custom arrowhead SVGs, zoom level and pan.
     eventBus.on('diagram.init', () => {
@@ -98,61 +112,23 @@ function MaestroTaskEvents(canvas, eventBus, modeling) {
       }, 0);
     });
 
-    // When a connection is added, we will alter that connection's marker and colour based on the connecton type
+    // When a connection is added, alter its marker and colour based on the connection type.
     eventBus.on('connection.added', function(event) {
-      const element = event.element;
-      const path = event.gfx.querySelector('path');
-      const baseUrl = window.location.href.split('#')[0];
-      if (path) {
-        let color = '#000';
-        let svgColor = 'black';
-        let connectionType = element.businessObject.connectionType || false;
-        if(connectionType == 'MaestroFalse') {
-          color = '#f00';
-          svgColor = 'red';
-        }
-        path.style.color = color;
-        path.setAttribute('stroke', color);
-        path.setAttribute('stroke-width', 3);
-        tinySVG.attr(path, 'color', color);
-        tinySVG.attr(path, 'stroke', color);
-        tinySVG.attr(path, 'stroke-width', 3);
-        tinySVG.attr(path, 'marker-end', `url(${baseUrl}#arrowhead-${svgColor})`);
-      }
+      _applyConnectionStyle(event.element);
     });
 
-    // When a shape is moved, so too are the connections.  
-    // We update the connections with their appropriate colours and markers
+    // When a shape is moved, so too are the connections.
+    // We update the connections with their appropriate colours and markers.
+    // During an active drag we defer all work until drag.end to avoid
+    // running N synchronous DOM updates for every intermediate waypoint change.
     eventBus.on('element.changed', function(event) {
-      /**
-       * When a shape is moved, so too are the connections.  
-       * We update the connections with their appropriate colours and markers
-       */
       const element = event.element;
-      const baseUrl = window.location.href.split('#')[0];
-      // Only apply to connections
-      if (element.waypoints) {
-        const gfx = canvas.getGraphics(element);
-        const path = gfx.querySelector('path');
-
-        if (path) {
-          let color = '#000';
-          let svgColor = 'black';
-          let connectionType = element.businessObject.connectionType || false;
-          if(connectionType == 'MaestroFalse') {
-            color = '#f00';
-            svgColor = 'red';
-          }
-          path.style.color = color;
-          path.setAttribute('stroke', color);
-          path.setAttribute('stroke-width', 3);
-          path.style.color = color;
-          tinySVG.attr(path, 'color', color);
-          tinySVG.attr(path, 'stroke', color);
-          tinySVG.attr(path, 'stroke-width', 3);
-          tinySVG.attr(path, 'marker-end', `url(${baseUrl}#arrowhead-${svgColor})`);
-        }
+      if (!element.waypoints) return;
+      if (isDragging) {
+        deferredChangedElements.add(element);
+        return;
       }
+      _applyConnectionStyle(element);
     });
 
     // When we click on a task
@@ -232,6 +208,29 @@ function MaestroTaskEvents(canvas, eventBus, modeling) {
       }, Maestro.panZoomDelay);
 
     });
+
+    /**
+     * Apply stroke colour and arrowhead marker to a connection element's SVG path.
+     * Extracted so it can be called from both element.changed and the drag.end flush.
+     *
+     * @param {Object} element
+     */
+    function _applyConnectionStyle(element) {
+      const baseUrl = window.location.href.split('#')[0];
+      const gfx = canvas.getGraphics(element);
+      const path = gfx && gfx.querySelector('path');
+      if (!path) return;
+      const connectionType = element.businessObject.connectionType || false;
+      const color = connectionType === 'MaestroFalse' ? '#f00' : '#000';
+      const svgColor = connectionType === 'MaestroFalse' ? 'red' : 'black';
+      path.style.color = color;
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', 3);
+      tinySVG.attr(path, 'color', color);
+      tinySVG.attr(path, 'stroke', color);
+      tinySVG.attr(path, 'stroke-width', 3);
+      tinySVG.attr(path, 'marker-end', `url(${baseUrl}#arrowhead-${svgColor})`);
+    }
 
     /**
      * During canvas init, we inject the two arrowhead markers into the canvas defs.
