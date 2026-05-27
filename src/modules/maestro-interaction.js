@@ -24,6 +24,7 @@ import 'diagram-js/assets/diagram-js.css';
 import maestroTaskRenderer from './maestro-task-renderer';
 import maestroTaskEvents from './maestro-task-events';
 import { maestroPaletteProvider } from './maestro-palette-provider';
+import maestroTouchModule from './maestro-touch';
 
 
 /**
@@ -59,6 +60,7 @@ export default {
     ZoomScrollModule,
     maestroTaskEvents,
     maestroTaskRenderer,
-    maestroPaletteProvider
+    maestroPaletteProvider,
+    maestroTouchModule
   ]
 };
